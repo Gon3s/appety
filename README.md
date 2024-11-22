@@ -14,7 +14,7 @@ Un bot qui récupère le menu du jour depuis la page Facebook d'Appety et le pos
 
 1. Clonez le repository :
 ```bash
-git clone <votre-repo>
+git clone https://github.com/Gon3s/appety
 cd appety-bot
 ```
 
