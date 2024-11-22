@@ -13,17 +13,20 @@ Un bot qui récupère le menu du jour depuis la page Facebook d'Appety et le pos
 ## Installation
 
 1. Clonez le repository :
+
 ```bash
 git clone https://github.com/Gon3s/appety
 cd appety-bot
 ```
 
 2. Initialisez un projet uv :
+
 ```bash
 uv venv
 ```
 
 3. Activez l'environnement virtuel :
+
 ```bash
 # Windows
 .venv/Scripts/activate
@@ -33,11 +36,13 @@ source .venv/bin/activate
 ```
 
 4. Installez les dépendances avec uv :
+
 ```bash
-uv pip install -e .
+uv pip install -r requirements.txt
 ```
 
 5. Créez un fichier `.env` à la racine du projet :
+
 ```env
 SLACK_BOT_TOKEN=xoxb-votre-token-slack
 ```
@@ -53,8 +58,9 @@ SLACK_BOT_TOKEN=xoxb-votre-token-slack
 ## Utilisation
 
 Pour exécuter le bot :
+
 ```bash
-python slack_poster.py
+python main.py
 ```
 
 ## Structure du projet
@@ -63,32 +69,20 @@ python slack_poster.py
 appety-bot/
 ├── .venv/                 # Environnement virtuel uv
 ├── facebook_scraper.py    # Scraping de la page Facebook
-├── slack_poster.py        # Envoi du menu sur Slack
-├── pyproject.toml        # Configuration du projet et dépendances
+├── main.py                # Script principal
+├── requirements.txt       # Dépendances du projet
 ├── .env                   # Configuration (tokens)
 └── README.md
 ```
 
 ## Dépendances
 
-Les dépendances sont gérées dans le fichier `pyproject.toml` :
+Les dépendances sont gérées dans le fichier `requirements.txr` :
+
+- beautifulsoup4 : Parse HTML
 - seleniumbase : Scraping web
 - slack-sdk : Intégration Slack
 - python-dotenv : Gestion des variables d'environnement
-
-## Développement
-
-Pour installer en mode développement :
-```bash
-uv pip install -e .
-```
-
-Pour ajouter une nouvelle dépendance :
-1. Ajoutez-la dans `pyproject.toml`
-2. Puis exécutez :
-```bash
-uv pip install -e .
-```
 
 ## Note
 
