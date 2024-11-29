@@ -149,12 +149,12 @@ def post_menu_to_slack(channel: str, max_retries: int, delay_minutes: int, log_u
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Poste le menu Appety sur Slack')
     parser.add_argument('--channel', '-c', 
-                       default='#appety',
-                       help='Nom du channel Slack (défaut: #appety)')
+                       default='#appety-menu',
+                       help='Nom du channel Slack (défaut: #appety-menu)')
     parser.add_argument('--retries', '-r',
                        type=int,
-                       default=4,
-                       help='Nombre maximum de tentatives (défaut: 4)')
+                       default=5,
+                       help='Nombre maximum de tentatives (défaut: 5)')
     parser.add_argument('--delay', '-d',
                        type=int,
                        default=30,
