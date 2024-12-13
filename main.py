@@ -1,85 +1,28 @@
 from slack_sdk import WebClient
-from slack_sdk.errors import SlackApiError
 from dotenv import load_dotenv
 import os
 import argparse
 from facebook_scraper import get_latest_menu
-import hashlib
-import json
-from datetime import datetime
-import requests
 import time
 
-class SlackLogger:
-    def __init__(self, client: WebClient, user_id: str = None):
-        self.client = client
-        self.user_id = user_id
-        self.logs = []
-    
-    def log(self, message: str):
-        """Log un message et l'envoie à l'utilisateur si configuré"""
-        timestamp = datetime.now().strftime("%H:%M:%S")
-        log_message = f"[{timestamp}] {message}"
-        print(log_message)
-        self.logs.append(log_message)
-        
-        if self.user_id:
-            try:
-                self.client.chat_postMessage(
-                    channel=self.user_id,
-                    text=f"🤖 *Log*: {message}"
-                )
-            except SlackApiError as e:
-                print(f"Erreur lors de l'envoi du log: {e}")
-
-    def send_summary(self):
-        """Envoie un résumé des logs à l'utilisateur"""
-        if self.user_id and self.logs:
-            try:
-                summary = "\n".join(self.logs)
-                self.client.chat_postMessage(
-                    channel=self.user_id,
-                    text=f"📋 *Résumé des opérations*\n```\n{summary}\n```"
-                )
-            except SlackApiError as e:
-                print(f"Erreur lors de l'envoi du résumé: {e}")
-
-
-class MenuCache:
-    def __init__(self, cache_file="menu_cache.json"):
-        self.cache_file = cache_file
-        self.cache = self._load_cache()
-    
-    def _load_cache(self):
-        if os.path.exists(self.cache_file):
-            try:
-                with open(self.cache_file, 'r') as f:
-                    return json.load(f)
-            except:
-                return {}
-        return {}
-    
-    def _save_cache(self):
-        with open(self.cache_file, 'w') as f:
-            json.dump(self.cache, f)
-    
-    def is_new_image(self, image_url: str) -> bool:
-        current_hash = get_image_hash(image_url)
-        last_hash = self.cache.get('last_hash')
-        
-        self.cache['last_hash'] = current_hash
-        self.cache['last_update'] = datetime.now().isoformat()
-        self._save_cache()
-        
-        return last_hash != current_hash
-
-def get_image_hash(image_url: str) -> str:
-    response = requests.get(image_url)
-    return hashlib.md5(response.content).hexdigest()
-
+from utils.slack_logger import SlackLogger
+from models.menu_cache import MenuCache
 
 def check_and_post_menu(client: WebClient, channel: str, logger: SlackLogger, retry_count: int = 0, max_retries: int = 4, delay_minutes: int = 30):
-    """Vérifie et poste le menu avec retry"""
+    """
+    Vérifie et poste le menu avec retry.
+
+    Args:
+        client (WebClient): Le client Slack.
+        channel (str): Le canal Slack où poster le menu.
+        logger (SlackLogger): Le logger pour enregistrer les messages.
+        retry_count (int, optional): Le nombre de tentatives actuelles. Par défaut à 0.
+        max_retries (int, optional): Le nombre maximum de tentatives. Par défaut à 4.
+        delay_minutes (int, optional): Le délai entre les tentatives en minutes. Par défaut à 30.
+
+    Returns:
+        bool: True si le menu a été posté avec succès, False sinon.
+    """
     while retry_count < max_retries:
         try:
             logger.log(f"Tentative {retry_count + 1}/{max_retries} de récupération du menu")
@@ -132,7 +75,15 @@ def check_and_post_menu(client: WebClient, channel: str, logger: SlackLogger, re
             return False
 
 def post_menu_to_slack(channel: str, max_retries: int, delay_minutes: int, log_user: str = None):
-    """Poste le menu dans le canal Slack spécifié"""
+    """
+    Poste le menu dans le canal Slack spécifié.
+
+    Args:
+        channel (str): Le canal Slack où poster le menu.
+        max_retries (int): Le nombre maximum de tentatives.
+        delay_minutes (int): Le délai entre les tentatives en minutes.
+        log_user (str, optional): L'ID utilisateur Slack pour recevoir les logs. Par défaut à None.
+    """
     load_dotenv()
     
     slack_token = os.getenv("SLACK_BOT_TOKEN")

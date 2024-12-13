@@ -5,3 +5,6 @@
 downloaded_files/
 
 __pycache__
+
+# Ignore SQLite database files
+*.db
