@@ -95,6 +95,11 @@ Le script utilise SeleniumBase qui nécessite un navigateur Chrome. Il sera inst
 
 ## Changelog
 
+### 2024-12-2024
+- Ajout d'un cache dans une base de données SQLite
+- Réorganisation des fichiers dans des dossiers appropriés
+- Ajout de commentaires pour la documentation
+
 ### 2024-11-27
 - Ajout du système de retry (4 tentatives toutes les 30 minutes)
 - Ajout du système de logs utilisateur

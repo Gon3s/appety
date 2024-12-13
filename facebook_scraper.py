@@ -3,7 +3,13 @@ import time
 from typing import Optional, Dict
 
 def get_latest_menu() -> Optional[Dict[str, str]]:
-    """Récupère le dernier menu posté sur la page Facebook d'Appety"""
+    """
+    Récupère le dernier menu posté sur la page Facebook d'Appety.
+    
+    Returns:
+        Optional[Dict[str, str]]: Un dictionnaire contenant l'URL de l'image et le texte alternatif de l'image du dernier menu,
+                                  ou None en cas d'erreur.
+    """
     APPETY_URL = "https://www.facebook.com/people/Appety/100091477011703/"
     
     with SB(uc=True, headless=True) as sb:
