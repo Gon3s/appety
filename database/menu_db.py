@@ -23,42 +23,41 @@ class MenuDatabase:
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS menus (
-                    hash TEXT PRIMARY KEY,
+                    parser_name TEXT,
+                    hash TEXT,
                     url TEXT NOT NULL,
-                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+                    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY (parser_name, hash)
                 )
             """)
-    
-    def add_menu(self, hash: str, url: str):
+
+    def add_menu(self, parser_name: str, hash: str, url: str):
         """Add a new menu entry to the database.
-        
+
         Args:
+            parser_name (str): The name of the parser.
             hash (str): The hash value of the menu content.
             url (str): The URL where the menu was found.
         """
         with sqlite3.connect(self.db_path) as conn:
-            conn.execute("INSERT OR IGNORE INTO menus (hash, url) VALUES (?, ?)", (hash, url))
-    
-    def exists(self, hash: str) -> bool:
-        """Check if a menu with the given hash exists in the database.
-        
+            conn.execute(
+                "INSERT OR IGNORE INTO menus (parser_name, hash, url) VALUES (?, ?, ?)",
+                (parser_name, hash, url),
+            )
+
+    def exists(self, parser_name: str, hash: str) -> bool:
+        """Check if a menu with the given parser name and hash exists in the database.
+
         Args:
+            parser_name (str): The name of the parser.
             hash (str): The hash value to check.
-            
+
         Returns:
             bool: True if the menu exists, False otherwise.
         """
         with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute("SELECT 1 FROM menus WHERE hash = ?", (hash,))
+            cursor = conn.execute(
+                "SELECT 1 FROM menus WHERE parser_name = ? AND hash = ?",
+                (parser_name, hash),
+            )
             return cursor.fetchone() is not None
-    
-    def get_last_menu(self) -> tuple:
-        """Retrieve the most recently added menu from the database.
-        
-        Returns:
-            tuple: A tuple containing (hash, url) of the latest menu,
-                  or None if no menus exist.
-        """
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute("SELECT hash, url FROM menus ORDER BY timestamp DESC LIMIT 1")
-            return cursor.fetchone()

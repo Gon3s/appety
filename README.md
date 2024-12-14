@@ -53,10 +53,11 @@ SLACK_BOT_TOKEN=xoxb-votre-token-slack
 ## Utilisation
 
 ```bash
-python main.py --channel "#mon-channel" --retries 4 --delay 30 --log-user "@U1234567"
+python main.py --parser "appety" --channel "#mon-channel" --retries 4 --delay 30 --log-user "@U1234567"
 ```
 
 Options disponibles :
+- `--parser`, `-p` : Parser à utiliser (défaut: appety)
 - `--channel`, `-c` : Canal Slack cible (défaut: #appety)
 - `--retries`, `-r` : Nombre de tentatives (défaut: 4)
 - `--delay`, `-d` : Délai entre tentatives en minutes (défaut: 30)
@@ -73,7 +74,9 @@ Pour trouver votre ID utilisateur :
 ```
 appety-bot/
 ├── .venv/                 # Environnement virtuel uv
-├── facebook_scraper.py    # Scraping de la page Facebook
+├── database/              # Base de données SQLite
+├── models/                # Modèles de données
+├── parsers/               # Parsers pour les différents sites
 ├── main.py                # Script principal
 ├── requirements.txt       # Dépendances du projet
 ├── .env                   # Configuration (tokens)
@@ -95,7 +98,12 @@ Le script utilise SeleniumBase qui nécessite un navigateur Chrome. Il sera inst
 
 ## Changelog
 
-### 2024-12-2024
+### 2024-12-14
+- Ajout d'une base de données SQLite pour le cache
+- Rendre générique le parser pour les différents sites
+- Création d'un parser pour La brasserie
+
+### 2024-12-13
 - Ajout d'un cache dans une base de données SQLite
 - Réorganisation des fichiers dans des dossiers appropriés
 - Ajout de commentaires pour la documentation
