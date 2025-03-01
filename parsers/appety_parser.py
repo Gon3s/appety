@@ -40,5 +40,5 @@ class AppetyParser(BaseParser):
                     }
 
             except Exception as e:
-                print(f"Erreur lors de la récupération du menu: {e}")
+                logger.error(f"Erreur lors de la récupération du menu: {e}")
                 return None
