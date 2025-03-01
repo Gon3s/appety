@@ -32,7 +32,7 @@ class BrasserieParser(BaseParser):
                     menu_div.screenshot("brasserie_menu.png")
 
                     # Encode l'image redimensionnée en base64 pour l'URL
-                    with open("brasserie_menu_resized.png", "rb") as img_file:
+                    with open("brasserie_menu.png", "rb") as img_file:
                         img_base64 = base64.b64encode(img_file.read()).decode()
 
                     # Crée l'URL de données
