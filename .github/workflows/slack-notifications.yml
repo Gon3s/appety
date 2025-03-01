@@ -1,0 +1,57 @@
+name: Slack Notifications
+
+on:
+  schedule:
+    - cron: '30 8 * * 1-5'  # 8:30 UTC
+  workflow_dispatch:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        project: [appety, brasserie]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install uv
+        run: |
+          pip install uv
+          uv --version
+
+      - name: Create venv
+        run: |
+          uv venv
+          source .venv/bin/activate
+
+      - name: Install dependencies
+        run: |
+          uv pip install -r requirements.txt
+
+      - name: Create .env file
+        run: |
+          echo "SLACK_APP_TOKEN=${{ secrets.SLACK_APP_TOKEN }}" >> .env
+          echo "SLACK_BOT_TOKEN=${{ secrets.SLACK_BOT_TOKEN }}" >> .env
+
+      - name: Run notification
+        run: >
+          uv run main.py 
+          -p ${{ matrix.project }} 
+          -l "${{ secrets.SLACK_USER_ID }}"
+          -c "${{ secrets.SLACK_CHANNEL }}"
+          -r "${{ secrets.SLACK_RETRIES }}"
+          -d "${{ secrets.SLACK_DELAY }}"
+          # Add logging for notification results
+          echo "Notification sent to project: ${{ matrix.project }}"
+          # Log the completion of the notification task
+          echo "Notification process completed."
+
+      - name: Cleanup sensitive files
+        if: always()
+        run: rm -f .env
